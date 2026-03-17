@@ -1,6 +1,15 @@
 # WPO Hydraulic Utilities 1.20.1
 
-Forge 1.20.1 port of the Water Physics Overhaul hydraulic add-on.
+Original add-on mod for Water Physics Overhaul, maintained for Forge 1.20.1.
+
+## Overview
+
+Hydraulic Utilities adds practical control blocks for moving, directing, blocking, and testing water in WPO setups.
+
+- Pumps, drains, valves, and tap nozzles
+- Water grates with different filtering behavior
+- Watertight doors and trapdoors
+- Creative water and lava sources for testing and setup work
 
 ## Credits
 

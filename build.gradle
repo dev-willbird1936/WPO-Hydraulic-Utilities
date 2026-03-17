@@ -68,7 +68,7 @@ tasks.named('processResources', ProcessResources).configure {
         mod_version: version,
         mod_license: 'All Rights Reserved',
         mod_authors: project.findProperty('project_public_author'),
-        mod_description: 'Pumps, drains, valves, grates, watertight closures, and utility storage for Water Physics Overhaul.',
+        mod_description: 'Original WPO add-on focused on pumps, drains, valves, grates, watertight closures, and practical hydraulic control blocks.',
         wpo_version_range: "[${project.findProperty('wpo_mod_version')},)"
     ]
     inputs.properties replaceProperties
