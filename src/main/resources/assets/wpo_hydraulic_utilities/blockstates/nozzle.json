@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "enabled=false,facing=down,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle", "x": 90 },
+    "enabled=false,facing=down,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle", "x": 90 },
+    "enabled=true,facing=down,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle", "x": 90 },
+    "enabled=true,facing=down,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle", "x": 90 },
+    "enabled=false,facing=up,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle", "x": 270 },
+    "enabled=false,facing=up,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle", "x": 270 },
+    "enabled=true,facing=up,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle", "x": 270 },
+    "enabled=true,facing=up,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle", "x": 270 },
+    "enabled=false,facing=north,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle" },
+    "enabled=false,facing=north,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle" },
+    "enabled=true,facing=north,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle" },
+    "enabled=true,facing=north,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle" },
+    "enabled=false,facing=south,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 180 },
+    "enabled=false,facing=south,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 180 },
+    "enabled=true,facing=south,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 180 },
+    "enabled=true,facing=south,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 180 },
+    "enabled=false,facing=west,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 270 },
+    "enabled=false,facing=west,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 270 },
+    "enabled=true,facing=west,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 270 },
+    "enabled=true,facing=west,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 270 },
+    "enabled=false,facing=east,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 90 },
+    "enabled=false,facing=east,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 90 },
+    "enabled=true,facing=east,powered=false": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 90 },
+    "enabled=true,facing=east,powered=true": { "model": "wpo_hydraulic_utilities:block/nozzle", "y": 90 }
+  }
+}

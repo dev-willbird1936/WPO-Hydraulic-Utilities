@@ -1,0 +1,14 @@
+{
+  "itemGroup.wpo_hydraulic_utilities": "WPO: Hydraulic Utilities",
+  "block.wpo_hydraulic_utilities.drain": "Drain",
+  "block.wpo_hydraulic_utilities.pump": "Pump",
+  "block.wpo_hydraulic_utilities.nozzle": "Tap Nozzle",
+  "block.wpo_hydraulic_utilities.creative_water_source": "Creative Water Source",
+  "block.wpo_hydraulic_utilities.creative_lava_source": "Creative Lava Source",
+  "block.wpo_hydraulic_utilities.valve": "Valve",
+  "block.wpo_hydraulic_utilities.water_grate": "Water Grate",
+  "block.wpo_hydraulic_utilities.water_item_grate": "Water and Item Grate",
+  "block.wpo_hydraulic_utilities.water_item_no_mob_grate": "Water and Item No-Mob Grate",
+  "block.wpo_hydraulic_utilities.watertight_door": "Watertight Door",
+  "block.wpo_hydraulic_utilities.watertight_trapdoor": "Watertight Trapdoor"
+}

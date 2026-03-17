@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=down": { "model": "wpo_hydraulic_utilities:block/valve" },
+    "facing=up": { "model": "wpo_hydraulic_utilities:block/valve" },
+    "facing=north": { "model": "wpo_hydraulic_utilities:block/valve" },
+    "facing=south": { "model": "wpo_hydraulic_utilities:block/valve", "y": 180 },
+    "facing=west": { "model": "wpo_hydraulic_utilities:block/valve", "y": 270 },
+    "facing=east": { "model": "wpo_hydraulic_utilities:block/valve", "y": 90 }
+  }
+}

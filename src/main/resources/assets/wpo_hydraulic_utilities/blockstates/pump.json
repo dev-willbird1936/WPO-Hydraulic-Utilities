@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=down,powered=false": { "model": "wpo_hydraulic_utilities:block/pump" },
+    "facing=down,powered=true": { "model": "wpo_hydraulic_utilities:block/pump" },
+    "facing=up,powered=false": { "model": "wpo_hydraulic_utilities:block/pump" },
+    "facing=up,powered=true": { "model": "wpo_hydraulic_utilities:block/pump" },
+    "facing=north,powered=false": { "model": "wpo_hydraulic_utilities:block/pump" },
+    "facing=north,powered=true": { "model": "wpo_hydraulic_utilities:block/pump" },
+    "facing=south,powered=false": { "model": "wpo_hydraulic_utilities:block/pump", "y": 180 },
+    "facing=south,powered=true": { "model": "wpo_hydraulic_utilities:block/pump", "y": 180 },
+    "facing=west,powered=false": { "model": "wpo_hydraulic_utilities:block/pump", "y": 270 },
+    "facing=west,powered=true": { "model": "wpo_hydraulic_utilities:block/pump", "y": 270 },
+    "facing=east,powered=false": { "model": "wpo_hydraulic_utilities:block/pump", "y": 90 },
+    "facing=east,powered=true": { "model": "wpo_hydraulic_utilities:block/pump", "y": 90 }
+  }
+}
