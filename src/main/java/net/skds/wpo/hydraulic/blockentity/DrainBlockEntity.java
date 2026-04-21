@@ -3,13 +3,12 @@ package net.skds.wpo.hydraulic.blockentity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.skds.wpo.api.WPOFluidAccess;
 import net.skds.wpo.hydraulic.HydraulicConfig;
 import net.skds.wpo.hydraulic.HydraulicContent;
@@ -76,10 +75,9 @@ public class DrainBlockEntity extends HydraulicTankBlockEntity {
             return;
         }
         BlockPos outputPos = pos.relative(getFacing());
-        BlockEntity outputEntity = level.getBlockEntity(outputPos);
-        if (outputEntity != null) {
-            outputEntity.getCapability(ForgeCapabilities.FLUID_HANDLER, getFacing().getOpposite()).ifPresent(handler ->
-                FluidUtil.tryFluidTransfer(handler, tank, transferMb, true));
+        IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, outputPos, getFacing().getOpposite());
+        if (handler != null) {
+            FluidUtil.tryFluidTransfer(handler, tank, transferMb, true);
         } else if (HydraulicConfig.COMMON.voidExcessWater.get()) {
             tank.drain(transferMb, IFluidHandler.FluidAction.EXECUTE);
         }

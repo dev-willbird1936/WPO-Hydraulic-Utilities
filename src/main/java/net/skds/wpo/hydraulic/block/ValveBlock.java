@@ -34,7 +34,7 @@ public class ValveBlock extends Block implements IBaseWL, SimpleWaterloggedBlock
     );
 
     public ValveBlock() {
-        super(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).sound(SoundType.METAL).strength(4.0F, 6.0F).noOcclusion());
+        super(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).sound(SoundType.METAL).strength(4.0F, 6.0F).noOcclusion());
         registerDefaultState(stateDefinition.any()
             .setValue(BlockStateProperties.FACING, Direction.NORTH)
             .setValue(BlockStateProperties.WATERLOGGED, false)

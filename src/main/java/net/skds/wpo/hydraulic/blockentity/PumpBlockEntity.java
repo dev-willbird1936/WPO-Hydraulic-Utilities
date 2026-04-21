@@ -4,13 +4,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.skds.wpo.api.WPOFluidAccess;
 import net.skds.wpo.hydraulic.HydraulicConfig;
 import net.skds.wpo.hydraulic.HydraulicContent;
@@ -51,13 +50,9 @@ public class PumpBlockEntity extends HydraulicTankBlockEntity {
         }
         Direction inputSide = getFacing().getOpposite();
         BlockPos inputPos = pos.relative(inputSide);
-        BlockEntity inputEntity = level.getBlockEntity(inputPos);
-        if (inputEntity != null) {
-            inputEntity.getCapability(ForgeCapabilities.FLUID_HANDLER, getFacing()).ifPresent(handler -> {
-                if (tank.getSpace() > 0) {
-                    FluidUtil.tryFluidTransfer(tank, handler, transferMb, true);
-                }
-            });
+        IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, inputPos, getFacing());
+        if (handler != null && tank.getSpace() > 0) {
+            FluidUtil.tryFluidTransfer(tank, handler, transferMb, true);
         }
         if (tank.getSpace() < MB_PER_LEVEL || !WPOFluidAccess.isChunkLoaded(level, inputPos)) {
             return;
@@ -79,13 +74,9 @@ public class PumpBlockEntity extends HydraulicTankBlockEntity {
         }
         Direction outputSide = getFacing();
         BlockPos outputPos = pos.relative(outputSide);
-        BlockEntity outputEntity = level.getBlockEntity(outputPos);
-        if (outputEntity != null) {
-            outputEntity.getCapability(ForgeCapabilities.FLUID_HANDLER, outputSide.getOpposite()).ifPresent(handler -> {
-                if (!tank.isEmpty()) {
-                    FluidUtil.tryFluidTransfer(handler, tank, transferMb, true);
-                }
-            });
+        IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, outputPos, outputSide.getOpposite());
+        if (handler != null && !tank.isEmpty()) {
+            FluidUtil.tryFluidTransfer(handler, tank, transferMb, true);
         }
         if (tank.getFluidAmount() < MB_PER_LEVEL || !WPOFluidAccess.isChunkLoaded(level, outputPos)) {
             return;

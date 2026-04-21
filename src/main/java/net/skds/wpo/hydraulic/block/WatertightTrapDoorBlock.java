@@ -17,7 +17,7 @@ import net.skds.wpo.hydraulic.HydraulicConfig;
 public class WatertightTrapDoorBlock extends TrapDoorBlock implements IWPOFluidPassage {
 
     public WatertightTrapDoorBlock() {
-        super(BlockBehaviour.Properties.copy(Blocks.IRON_TRAPDOOR).sound(SoundType.METAL).strength(5.0F, 6.0F).noOcclusion(), BlockSetType.OAK);
+        super(BlockSetType.OAK, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_TRAPDOOR).sound(SoundType.METAL).strength(5.0F, 6.0F).noOcclusion());
     }
 
     @Override

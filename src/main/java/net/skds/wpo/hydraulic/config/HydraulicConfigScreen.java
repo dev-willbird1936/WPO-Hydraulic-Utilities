@@ -160,19 +160,19 @@ public class HydraulicConfigScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         int maxScroll = getMaxScroll(page);
         if (maxScroll <= 0) {
-            return super.mouseScrolled(mouseX, mouseY, delta);
+            return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
         }
         int step = ROW_HEIGHT;
-        int next = Mth.clamp(getScroll(page) - (int) Math.signum(delta) * step, 0, maxScroll);
+        int next = Mth.clamp(getScroll(page) - (int) Math.signum(scrollY) * step, 0, maxScroll);
         if (next != getScroll(page)) {
             setScroll(page, next);
             updatePageState();
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, delta);
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     private void saveAndClose() {
@@ -203,7 +203,7 @@ public class HydraulicConfigScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         int centerX = this.width / 2;

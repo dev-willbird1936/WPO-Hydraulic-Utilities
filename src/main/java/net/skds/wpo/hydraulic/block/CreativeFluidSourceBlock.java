@@ -1,12 +1,12 @@
 package net.skds.wpo.hydraulic.block;
 
+import com.mojang.serialization.MapCodec;
 import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -24,22 +24,33 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import net.skds.wpo.hydraulic.HydraulicContent;
 import net.skds.wpo.hydraulic.blockentity.CreativeFluidSourceBlockEntity;
 
 public class CreativeFluidSourceBlock extends BaseEntityBlock {
 
     private final FlowingFluid fluid;
+    private final MapCodec<CreativeFluidSourceBlock> codec;
 
     public CreativeFluidSourceBlock(FlowingFluid fluid) {
-        super(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).sound(SoundType.METAL).strength(4.0F, 6.0F));
+        this(fluid, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).sound(SoundType.METAL).strength(4.0F, 6.0F));
+    }
+
+    private CreativeFluidSourceBlock(FlowingFluid fluid, BlockBehaviour.Properties properties) {
+        super(properties);
         this.fluid = fluid;
+        this.codec = simpleCodec(props -> new CreativeFluidSourceBlock(fluid, props));
         registerDefaultState(stateDefinition.any().setValue(BlockStateProperties.FACING, Direction.NORTH));
     }
 
     public FlowingFluid getSourceFluid() {
         return fluid;
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return codec;
     }
 
     @Override
@@ -68,11 +79,11 @@ public class CreativeFluidSourceBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())) {
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

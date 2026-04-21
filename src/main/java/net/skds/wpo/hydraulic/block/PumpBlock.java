@@ -1,7 +1,7 @@
 package net.skds.wpo.hydraulic.block;
 
+import com.mojang.serialization.MapCodec;
 import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -16,8 +16,19 @@ import net.skds.wpo.hydraulic.blockentity.PumpBlockEntity;
 
 public class PumpBlock extends HydraulicMachineBlock {
 
+    public static final MapCodec<PumpBlock> CODEC = simpleCodec(PumpBlock::new);
+
     public PumpBlock() {
-        super(BlockBehaviour.Properties.copy(Blocks.COPPER_BLOCK).sound(SoundType.COPPER).strength(4.0F, 6.0F));
+        this(BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK).sound(SoundType.COPPER).strength(4.0F, 6.0F));
+    }
+
+    private PumpBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends HydraulicMachineBlock> codec() {
+        return CODEC;
     }
 
     @Override

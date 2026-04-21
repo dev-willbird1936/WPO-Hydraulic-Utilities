@@ -2,7 +2,6 @@ package net.skds.wpo.hydraulic.blockentity;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -12,11 +11,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.skds.wpo.WPOConfig;
 import net.skds.wpo.api.WPOFluidAccess;
 import net.skds.wpo.hydraulic.HydraulicConfig;
@@ -25,7 +21,7 @@ import net.skds.wpo.hydraulic.block.CreativeFluidSourceBlock;
 
 public class CreativeFluidSourceBlockEntity extends BlockEntity {
 
-    private final LazyOptional<IFluidHandler> fluidCapability = LazyOptional.of(InfiniteFluidHandler::new);
+    private final IFluidHandler fluidHandler = new InfiniteFluidHandler();
 
     public CreativeFluidSourceBlockEntity(BlockPos pos, BlockState state) {
         super(HydraulicContent.CREATIVE_SOURCE_BLOCK_ENTITY.get(), pos, state);
@@ -59,6 +55,11 @@ public class CreativeFluidSourceBlockEntity extends BlockEntity {
     }
 
     @Nullable
+    public IFluidHandler getFluidHandler(@Nullable Direction side) {
+        return fluidHandler;
+    }
+
+    @Nullable
     private FlowingFluid getConfiguredFluid(BlockState state) {
         return state.getBlock() instanceof CreativeFluidSourceBlock sourceBlock ? sourceBlock.getSourceFluid() : null;
     }
@@ -70,21 +71,6 @@ public class CreativeFluidSourceBlockEntity extends BlockEntity {
         }
         Fluid sourceFluid = fluid.getSource(false).getType();
         return new FluidStack(sourceFluid, amount);
-    }
-
-    @Override
-    public void setRemoved() {
-        super.setRemoved();
-        fluidCapability.invalidate();
-    }
-
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
-        if (capability == ForgeCapabilities.FLUID_HANDLER) {
-            return fluidCapability.cast();
-        }
-        return super.getCapability(capability, side);
     }
 
     private final class InfiniteFluidHandler implements IFluidHandler {

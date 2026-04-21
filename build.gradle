@@ -1,10 +1,12 @@
 import java.util.Properties
 
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'java-library'
+    id 'idea'
+    id 'net.neoforged.moddev' version '2.0.141'
 }
 
-def selectedMcVersion = (findProperty('mcVersion') ?: findProperty('default_mc_version') ?: '1.20.1').toString()
+def selectedMcVersion = (findProperty('mcVersion') ?: findProperty('default_mc_version') ?: '1.21.1').toString()
 def versionPropsFile = file("versions/${selectedMcVersion}.properties")
 if (!versionPropsFile.isFile()) {
     throw new GradleException("Missing version config for ${selectedMcVersion}: ${versionPropsFile}")
@@ -27,68 +29,71 @@ base {
     archivesName = "wpo_hydraulic_utilities-${minecraft_version}"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-minecraft {
-    mappings channel: mapping_channel, version: mapping_version
-    copyIdeResources = true
+neoForge {
+    version = neo_version
 
     runs {
-        configureEach {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                wpo_hydraulic_utilities {
-                    source sourceSets.main
-                }
-                wpo {
-                    source project(':water_physics_overhaul').sourceSets.main
-                }
-                skds_core {
-                    source project(':skds_core').sourceSets.main
-                }
-            }
-        }
-
         client {
-            property 'forge.enabledGameTestNamespaces', 'wpo_hydraulic_utilities'
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'wpo_hydraulic_utilities'
         }
 
         server {
-            property 'forge.enabledGameTestNamespaces', 'wpo_hydraulic_utilities'
-            args '--nogui'
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'wpo_hydraulic_utilities'
         }
 
         gameTestServer {
-            property 'forge.enabledGameTestNamespaces', 'wpo_hydraulic_utilities'
+            type = 'gameTestServer'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'wpo_hydraulic_utilities'
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        wpo_hydraulic_utilities {
+            sourceSet(sourceSets.main)
+        }
+        wpo {
+            sourceSet(project(':water_physics_overhaul').sourceSets.main)
+        }
+        skds_core {
+            sourceSet(project(':skds_core').sourceSets.main)
         }
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation project(':water_physics_overhaul')
 }
 
 tasks.named('processResources', ProcessResources).configure {
     def replaceProperties = [
-        minecraft_version: minecraft_version,
+        minecraft_version      : minecraft_version,
         minecraft_version_range: minecraft_version_range,
-        forge_version: forge_version,
-        forge_version_range: forge_version_range,
-        loader_version_range: loader_version_range,
-        mod_id: 'wpo_hydraulic_utilities',
-        mod_name: 'WPO: Hydraulic Utilities',
-        mod_version: version,
-        mod_license: 'All Rights Reserved',
-        mod_authors: project.findProperty('project_public_author'),
-        mod_description: 'Pumps, drains, valves, grates, watertight closures, and utility storage for Water Physics Overhaul.',
-        wpo_version_range: "[${wpo_mod_version},)"
+        neo_version            : neo_version,
+        loader_version_range   : loader_version_range,
+        mod_id                 : 'wpo_hydraulic_utilities',
+        mod_name               : 'WPO: Hydraulic Utilities',
+        mod_version            : version,
+        mod_license            : 'All Rights Reserved',
+        mod_authors            : project.findProperty('project_public_author'),
+        mod_description        : 'Pumps, drains, valves, grates, watertight closures, and utility storage for Water Physics Overhaul.',
+        wpo_version_range      : "[${wpo_mod_version},)"
     ]
     inputs.properties replaceProperties
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
         expand replaceProperties
     }
 }
@@ -96,26 +101,14 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'Specification-Title': 'wpo_hydraulic_utilities',
-            'Specification-Vendor': project.findProperty('project_public_vendor'),
-            'Specification-Version': '1',
-            'Implementation-Title': project.name,
+            'Specification-Title'   : 'wpo_hydraulic_utilities',
+            'Specification-Vendor'  : project.findProperty('project_public_vendor'),
+            'Specification-Version' : '1',
+            'Implementation-Title'  : project.name,
             'Implementation-Version': project.version,
-            'Implementation-Vendor': project.findProperty('project_public_vendor')
+            'Implementation-Vendor' : project.findProperty('project_public_vendor')
         ])
     }
-    finalizedBy 'reobfJar'
-}
-
-tasks.register('packageModJar', Copy) {
-    dependsOn tasks.named('reobfJar')
-    from(layout.buildDirectory.file('reobfJar/output.jar'))
-    into(layout.buildDirectory.dir('libs'))
-    rename { "${base.archivesName.get()}-${project.version}.jar" }
-}
-
-tasks.named('build').configure {
-    dependsOn tasks.named('packageModJar')
 }
 
 tasks.register('stageRelease', Copy) {
@@ -123,4 +116,15 @@ tasks.register('stageRelease', Copy) {
     from(layout.buildDirectory.dir('libs'))
     include "${base.archivesName.get()}-${project.version}.jar"
     into releaseOutputDir
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
 }

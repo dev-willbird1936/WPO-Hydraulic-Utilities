@@ -35,7 +35,7 @@ public class GrateBlock extends Block implements IBaseWL, SimpleWaterloggedBlock
     private final GrateMode mode;
 
     public GrateBlock(GrateMode mode) {
-        super(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).sound(SoundType.METAL).strength(4.0F, 6.0F).noOcclusion());
+        super(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).sound(SoundType.METAL).strength(4.0F, 6.0F).noOcclusion());
         this.mode = mode;
         registerDefaultState(stateDefinition.any()
             .setValue(BlockStateProperties.WATERLOGGED, false)

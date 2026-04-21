@@ -4,11 +4,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.skds.wpo.api.WPOFluidAccess;
 import net.skds.wpo.hydraulic.HydraulicConfig;
 import net.skds.wpo.hydraulic.HydraulicContent;
@@ -48,15 +47,10 @@ public class NozzleBlockEntity extends HydraulicTankBlockEntity {
             return;
         }
         Direction inputSide = getFacing().getOpposite();
-        BlockEntity inputEntity = level.getBlockEntity(pos.relative(inputSide));
-        if (inputEntity == null) {
-            return;
+        IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, pos.relative(inputSide), getFacing());
+        if (handler != null && tank.getSpace() > 0) {
+            FluidUtil.tryFluidTransfer(tank, handler, transferMb, true);
         }
-        inputEntity.getCapability(ForgeCapabilities.FLUID_HANDLER, getFacing()).ifPresent(handler -> {
-            if (tank.getSpace() > 0) {
-                FluidUtil.tryFluidTransfer(tank, handler, transferMb, true);
-            }
-        });
     }
 
     private void sprayForward(ServerLevel level, BlockPos pos, int transferMb) {

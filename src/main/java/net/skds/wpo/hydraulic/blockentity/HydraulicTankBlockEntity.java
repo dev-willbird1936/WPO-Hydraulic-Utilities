@@ -1,13 +1,13 @@
 package net.skds.wpo.hydraulic.blockentity;
 
+import java.util.EnumMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.EnumMap;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -17,19 +17,15 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.skds.wpo.hydraulic.HydraulicConfig;
 
 public abstract class HydraulicTankBlockEntity extends BlockEntity {
 
     protected final FluidTank tank;
-    private final LazyOptional<IFluidHandler> fluidCapability;
-    private final EnumMap<Direction, LazyOptional<IFluidHandler>> sidedFluidCapabilities = new EnumMap<>(Direction.class);
+    private final EnumMap<Direction, IFluidHandler> sidedFluidHandlers = new EnumMap<>(Direction.class);
 
     protected HydraulicTankBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -40,9 +36,8 @@ public abstract class HydraulicTankBlockEntity extends BlockEntity {
                 sync();
             }
         };
-        this.fluidCapability = LazyOptional.of(() -> tank);
         for (Direction side : Direction.values()) {
-            sidedFluidCapabilities.put(side, LazyOptional.of(() -> new HydraulicSidedFluidHandler(side)));
+            sidedFluidHandlers.put(side, new HydraulicSidedFluidHandler(side));
         }
     }
 
@@ -77,6 +72,11 @@ public abstract class HydraulicTankBlockEntity extends BlockEntity {
         return Math.max(1, Math.round(15.0F * tank.getFluidAmount() / capacity));
     }
 
+    @Nullable
+    public IFluidHandler getFluidHandler(@Nullable Direction side) {
+        return side == null ? tank : sidedFluidHandlers.get(side);
+    }
+
     protected void sync() {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -84,25 +84,23 @@ public abstract class HydraulicTankBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        tag.put("tank", tank.writeToNBT(new CompoundTag()));
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("tank", tank.writeToNBT(registries, new CompoundTag()));
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         tank.setCapacity(getTankCapacity());
-        if (tag.contains("tank", CompoundTag.TAG_COMPOUND)) {
-            tank.readFromNBT(tag.getCompound("tank"));
+        if (tag.contains("tank", Tag.TAG_COMPOUND)) {
+            tank.readFromNBT(registries, tag.getCompound("tank"));
         }
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
-        return tag;
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
     }
 
     @Nullable
@@ -112,30 +110,9 @@ public abstract class HydraulicTankBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        load(tag);
-    }
-
-    @Override
     public void onLoad() {
         super.onLoad();
         tank.setCapacity(getTankCapacity());
-    }
-
-    @Override
-    public void setRemoved() {
-        super.setRemoved();
-        fluidCapability.invalidate();
-        sidedFluidCapabilities.values().forEach(LazyOptional::invalidate);
-    }
-
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
-        if (capability == ForgeCapabilities.FLUID_HANDLER) {
-            return (side == null ? fluidCapability : sidedFluidCapabilities.get(side)).cast();
-        }
-        return super.getCapability(capability, side);
     }
 
     private final class HydraulicSidedFluidHandler implements IFluidHandler {
