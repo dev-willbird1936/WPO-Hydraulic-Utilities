@@ -61,7 +61,8 @@ public class DrainBlockEntity extends HydraulicTankBlockEntity {
             if (before <= 0) {
                 continue;
             }
-            int after = WPOFluidAccess.removeWater(level, sample, Math.min(before, remaining));
+            int levelsSpace = tank.getSpace() / MB_PER_LEVEL;
+            int after = WPOFluidAccess.removeWater(level, sample, Math.min(before, Math.min(remaining, levelsSpace)));
             int drained = Math.max(0, before - after);
             if (drained > 0) {
                 tank.fill(new FluidStack(Fluids.WATER, drained * MB_PER_LEVEL), IFluidHandler.FluidAction.EXECUTE);

@@ -61,7 +61,8 @@ public class PumpBlockEntity extends HydraulicTankBlockEntity {
         if (before <= 0) {
             return;
         }
-        int after = WPOFluidAccess.removeWater(level, inputPos, Math.min(before, throughputLevels));
+        int levelsSpace = tank.getSpace() / MB_PER_LEVEL;
+        int after = WPOFluidAccess.removeWater(level, inputPos, Math.min(before, Math.min(throughputLevels, levelsSpace)));
         int moved = Math.max(0, before - after);
         if (moved > 0) {
             tank.fill(new FluidStack(Fluids.WATER, moved * MB_PER_LEVEL), IFluidHandler.FluidAction.EXECUTE);
